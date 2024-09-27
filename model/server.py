@@ -465,21 +465,6 @@ async def read_data():
         })
     return response
 
-# Retrieve a lecture material by ID
-# @app.get("/get-files/{id}")
-# async def read_data(id: int):
-#     # Update the query to use 'like' for file_name
-#     result = conn.execute(lecture_materials.select().where(lecture_materials.c.file_name.like(f"{id}%"))).fetchone()
-#     if result:
-#         return {
-#             "id": result.id,
-#             "file_name": result.file_name,
-#             "file_type": result.file_type,
-#             "uploaded_at": result.uploaded_at.isoformat()
-#         }
-#     else:
-#         raise HTTPException(status_code=404, detail="Lecture Material not found")
-
 # Update an existing lecture material by ID
 @app.put("/update-file/{id}")
 async def update_data(id: int, material: LectureMaterialSchema):
