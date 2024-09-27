@@ -92,6 +92,7 @@ def update_chat_history_and_summary(ChatID, UserID, input_text, mediaType, fileN
 
     # This contains the latest history with the current user query and response added.
     latest_chat_history = chat_history[-10:]  # Use the last 10 interactions
+    
     # Chat summary is generated using the latest chat history and existing chat summary.
     new_chat_summary = summarize_chat_history(chat_summary, latest_chat_history)
     
@@ -118,6 +119,7 @@ def run_model(ChatID, UserID, input_text, extract, mediaType, fileName, preloade
     subjects_string = ", ".join(distinct_subjects)
     # TODO: Add the courses and subjects to process chat
 
+
     print("Courses:", courses_string)
     print("Subjects:", subjects_string)
     
@@ -126,6 +128,7 @@ def run_model(ChatID, UserID, input_text, extract, mediaType, fileName, preloade
     personalization = preloaded_data[ChatID]["personalization"]
     notes = preloaded_data[UserID]["notes"]
     feedback = preloaded_data[UserID]["feedback"]
+
 
     if input_text:
         start=time.time()
