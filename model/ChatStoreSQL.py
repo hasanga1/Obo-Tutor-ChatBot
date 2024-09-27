@@ -307,6 +307,7 @@ def get_mentor_notes_by_course(studentid):
         # Update the flag if notes are found
         notes_found = True
     
+
     # If no notes were found, add a default message for each course
     if not notes_found:
         # Query to get a list of all courses for the given studentid
@@ -324,6 +325,7 @@ def get_mentor_notes_by_course(studentid):
             notes_by_course[course] = "there are no available notes."
     
     return notes_by_course
+
 
 # This function returns a list of user chats ordered by timestamp
 def get_past_chats(user_id):
@@ -344,7 +346,6 @@ def get_past_chats(user_id):
     # Fetch all results
     past_chats = cursor.fetchall()
     
-    # Close the cursor and connection
     cursor.close()
     connection.close()
     
@@ -411,6 +412,7 @@ def update_user_role(userId, isAdmin):
     finally:
         cursor.close()
         connection.close()
+
 
 
 # This function is to be used in chain.py to gt values for the course and subject attributes
