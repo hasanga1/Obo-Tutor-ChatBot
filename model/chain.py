@@ -7,6 +7,7 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.query_constructor.base import (StructuredQueryOutputParser, AttributeInfo, get_query_constructor_prompt)
 from langchain_community.query_constructors.chroma import ChromaTranslator
 from langchain.retrievers.self_query.base import SelfQueryRetriever
+
 from dotenv import load_dotenv
 import os
 from PromptEng import get_template
@@ -28,6 +29,7 @@ def create_chain(vectorStore):
     # Define metadata field information. This is mandatory for the query constructor.
     # The values for course and subject are hardcoded here. The mySQL functions are in place to get them dynamically 
     # from the database. Didn't use it because we need to update the knowledge base to include these attribute values.
+    
     metadata_field_info = [
         AttributeInfo(
             name="subject",
@@ -55,7 +57,8 @@ def create_chain(vectorStore):
     )
 
     # In here also the values for course and subject are hardcoded. The mySQL functions are in place to get them dynamically.
-    retriever_prompt = ChatPromptTemplate.from_messages([
+    retriever_prompt = ChatPromptTemplate.from_messages
+    ([
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}"),
         ("human", 
