@@ -9,8 +9,8 @@ load_dotenv()
 groq_api_key=os.getenv('GROQ_API_KEY')
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-model=ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
-# model=ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
+# model=ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
+model=ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
 
 def summarize_chat_history(existing_summary, chat_history):
     chat_history_text = "\n".join([f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history])
