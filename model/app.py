@@ -2,6 +2,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma # type: ignore
 from langchain_core.messages import HumanMessage, AIMessage
+
 from dotenv import load_dotenv
 import os
 import time
@@ -92,7 +93,7 @@ def update_chat_history_and_summary(ChatID, UserID, input_text, mediaType, fileN
 
     # This contains the latest history with the current user query and response added.
     latest_chat_history = chat_history[-10:]  # Use the last 10 interactions
-    
+
     # Chat summary is generated using the latest chat history and existing chat summary.
     new_chat_summary = summarize_chat_history(chat_summary, latest_chat_history)
     
