@@ -1,6 +1,5 @@
 from langchain.prompts import FewShotPromptTemplate, PromptTemplate
 
-
 def get_template():
 
     # the 5 lists given below contains the relevant instruction to be used for the chat personalization parameters 
@@ -138,6 +137,7 @@ def get_template():
 
     AI: Let's think step by step."""
 
+
     # now create the few shot prompt template
     few_shot_prompt_template = FewShotPromptTemplate(
         examples=examples,
@@ -147,5 +147,6 @@ def get_template():
         input_variables=["context", "input", "extract", "chat_summary", "student_type", "learning_style", "communication_format", "tone_style", "reasoning_framework", "mentor_notes", "feedback"],
         example_separator="\n\n"
     )
+
 
     return few_shot_prompt_template
