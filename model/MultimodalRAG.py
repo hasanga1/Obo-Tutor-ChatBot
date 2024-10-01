@@ -19,6 +19,17 @@ from langchain_chroma import Chroma # type: ignore
 from dotenv import load_dotenv
 import os
 import warnings
+from langchain_community.document_loaders import PyPDFLoader, PyPDFDirectoryLoader, UnstructuredEPubLoader, UnstructuredExcelLoader, NotebookLoader, PythonLoader, SQLDatabaseLoader, UnstructuredXMLLoader
+from langchain_community.document_loaders import (
+    UnstructuredWordDocumentLoader,
+    TextLoader,
+    UnstructuredHTMLLoader,
+    UnstructuredMarkdownLoader,
+    UnstructuredPowerPointLoader,
+    CSVLoader,
+    DirectoryLoader
+)
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="transformers")
 
@@ -123,36 +134,6 @@ def transcribe_large_audio(file, file_size, file_name):
         os.remove(temp_file_path)
 
     return combined_transcription.strip()
-
-######################### IMAGES ##########################
-
-# def extract_images_from_pdf(pdf_path, output_dir):
-#     # Open the PDF file
-#     pdf_document = fitz.open(pdf_path)
-
-#     # Ensure the output directory exists
-#     os.makedirs(output_dir, exist_ok=True)
-
-#     # Extract the PDF's base name without the extension
-#     pdf_name = os.path.splitext(os.path.basename(pdf_path))[0]
-
-#     # Iterate through each page in the PDF
-#     for page_number in range(len(pdf_document)):
-#         page = pdf_document.load_page(page_number)
-#         images = page.get_images(full=True)
-
-#         for img_index, img in enumerate(images):
-#             xref = img[0]
-#             base_image = pdf_document.extract_image(xref)
-#             image_bytes = base_image["image"]
-#             image_ext = base_image["ext"]
-#             image_filename = f"{pdf_name}.pdf_{page_number+1}_img_{img_index+1}.{image_ext}"
-
-#             # Save the extracted image to the output directory
-#             with open(os.path.join(output_dir, image_filename), "wb") as img_file:
-#                 img_file.write(image_bytes)
-
-#     pdf_document.close()
 
 
 def extract_images_from_pdf(pdf_path, output_dir, zoom=2):
@@ -465,19 +446,6 @@ def process_videos_in_directory(input_dir, output_dir_base, frame_rate, subject)
 
 ######################### DOCS ##########################
 
-
-from langchain_community.document_loaders import PyPDFLoader, PyPDFDirectoryLoader, UnstructuredEPubLoader, UnstructuredExcelLoader, NotebookLoader, PythonLoader, SQLDatabaseLoader, UnstructuredXMLLoader
-from langchain_community.document_loaders import (
-    UnstructuredWordDocumentLoader,
-    TextLoader,
-    UnstructuredHTMLLoader,
-    UnstructuredMarkdownLoader,
-    UnstructuredPowerPointLoader,
-    CSVLoader,
-    DirectoryLoader
-)
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
 # Define loaders for different file types
 
 def text_preprocess(input_dir):
@@ -521,8 +489,6 @@ def text_preprocess(input_dir):
     documents = text_splitter.split_documents(all_documents)
 
     return documents
-
-
 
 def update_metadata(documents, subject):
     updated_documents = []
