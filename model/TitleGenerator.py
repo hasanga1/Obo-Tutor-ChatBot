@@ -9,8 +9,8 @@ load_dotenv()
 groq_api_key=os.getenv('GROQ_API_KEY')
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-model=ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
-# model=ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
+# model=ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
+model=ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
 
 def generate_chat_title(chat_history):
     chat_history_text = "\n".join([f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history])
