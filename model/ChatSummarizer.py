@@ -5,19 +5,31 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
 
+# Load environment variables
 load_dotenv()
-groq_api_key=os.getenv('GROQ_API_KEY')
+groq_api_key = os.getenv('GROQ_API_KEY')
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-# model=ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
-model=ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
+# Initialize the language model
+# model = ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
+model = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
 
 def summarize_chat_history(existing_summary, chat_history):
-    chat_history_text = "\n".join([f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history])
-    last_chat_pair = "\n".join([f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history[-2:]])
+    # Format the chat history
+    chat_history_text = "\n".join(
+        [f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history]
+    )
+    last_chat_pair = "\n".join(
+        [f"User: {msg.content}" if msg.type == "human" else f"Chatbot Response: {msg.content}" for msg in chat_history[-2:]]
+    )
     
-    combined_text = f"Summary of past converstaion: {existing_summary}\n\n Most recent chat history: {chat_history_text}\n\n"
+    # Combine existing summary with the current chat history
+    combined_text = (
+        f"Summary of past conversation: {existing_summary}\n\n"
+        f"Most recent chat history: {chat_history_text}\n\n"
+    )
 
+    # Define the prompt template
     prompt = ChatPromptTemplate.from_messages([
         ("human", """
         {text}
@@ -38,7 +50,7 @@ def summarize_chat_history(existing_summary, chat_history):
         Structure the summary with clear headers and bullet points for easy scanning. Use the following format:
 
         **Conversation Summary**
-        // Overview of the past conversation. Generate a consice summary for this section.//
+        // Overview of the past conversation. Generate a concise summary for this section.//
 
         // For the below sections do not exceed 10 bullet points for each section.//
         ## Main Topics:
@@ -69,11 +81,15 @@ def summarize_chat_history(existing_summary, chat_history):
         Ensure that the summary provides a comprehensive yet concise overview of the entire conversation, highlighting the most important elements without losing essential details.
         """)
     ])
+
+    # Create the language model chain
     chain = LLMChain(llm=model, prompt=prompt)
 
-    summary = chain.invoke({"text": combined_text})["text"]
-    
-    # Append the last chat pair to the summary
+    # Generate the summary
+    result = chain.invoke({"text": combined_text})
+    summary = result["text"]
+
+    # Append the last chat pair for context
     summary += f"\n\n**Last Chat Pair**:\n{last_chat_pair}"
 
     return summary
