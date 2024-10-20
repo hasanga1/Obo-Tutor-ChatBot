@@ -9,7 +9,6 @@ import { WindowIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-
 function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
@@ -44,25 +43,22 @@ function ChatPage() {
   useEffect(() => {
     if (!userId) {
       window.location.href = '/login';
-    } else {
-      fetchPastChats(userId);
+      return;
+    }
 
-      const shouldShowDisclaimer = location.state && location.state.fromLogin && Cookies.get('showDisclaimer') === 'true';
-      if (shouldShowDisclaimer) {
-        // Set a timeout to delay showing the disclaimer
-        const timeoutId = setTimeout(() => {
-          setShowDisclaimer(true);
-          Cookies.set('showDisclaimer', 'false'); // Update the cookie so it won't show again
-        }, 500); // Adjust the delay as needed (300ms here)
+    fetchPastChats(userId);
 
-        // Clear timeout on unmount
-        return () => clearTimeout(timeoutId);
-      }
+    const shouldShowDisclaimer = location.state?.fromLogin && Cookies.get('showDisclaimer') === 'true';
+    if (shouldShowDisclaimer) {
+      const timeoutId = setTimeout(() => {
+        setShowDisclaimer(true);
+        Cookies.set('showDisclaimer', 'false');
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [userId, location.state]);
 
-  // This function fetches past chats for the user and sets the chatId state to the first chat ID.
-  // Idea is that when page is reloaded, the user will see the most recent chat by default.
   const fetchPastChats = async (userId) => {
     try {
       const response = await axios.get(`http://localhost:8000/get-past-chats?userId=${userId}`);
@@ -76,6 +72,7 @@ function ChatPage() {
   return (
     <div className="flex flex-col h-screen">
       {showDisclaimer && <Disclaimer onClose={() => setShowDisclaimer(false)} />}
+
       {width > 500 ? (
         <div className="flex flex-grow overflow-hidden">
           {!showSidebarOnly && (
@@ -95,22 +92,21 @@ function ChatPage() {
             </div>
             <Footer />
           </div>
-
           <button
             className="absolute top-28 left-4 z-10 p-2 rounded-3xl bg-customtxt"
-            onClick={() => setShowSidebarOnly(prev => !prev)}
+            onClick={() => setShowSidebarOnly((prev) => !prev)}
           >
             <WindowIcon className="h-8 w-8 text-gray-700 hover:text-sky-700 transform rotate-90 -scale-y-100 hover:scale-125 transition-transform duration-200" />
           </button>
         </div>
       ) : (
-        /* Mobile View */
-        <div className="flex flex-col h-screen overflow-x-hidden"> {/* Prevent horizontal overflow */}
-          {/* Header with slightly reduced height */}
+        <div className="flex flex-col h-screen overflow-x-hidden">
           <Header isAdmin={isAdmin} className="h-10" />
           {!showSidebarOnly && (
             <Sidebar
-              className={`fixed top-16 left-0 bottom-0 w-64 z-20 transition-transform duration-300 ${showSidebarOnly ? 'translate-x-0' : '-translate-x-full'}`}
+              className={`fixed top-16 left-0 bottom-0 w-64 z-20 transition-transform duration-300 ${
+                showSidebarOnly ? 'translate-x-0' : '-translate-x-full'
+              }`}
               isOpen={isSidebarOpen}
               toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
               chatId={chatId}
@@ -120,21 +116,18 @@ function ChatPage() {
           )}
           <button
             className="absolute top-20 left-4 z-10 p-1 rounded-full bg-customtxt"
-            onClick={() => setShowSidebarOnly(prev => !prev)}
+            onClick={() => setShowSidebarOnly((prev) => !prev)}
           >
             <WindowIcon className="h-8 w-8 text-gray-700 transform rotate-90 -scale-y-100 hover:scale-125 transition-transform duration-200" />
           </button>
-          {/* Main content should take full width and be centered */}
-          <div className="flex flex-col flex-grow justify-center items-center w-full overflow-hidden"> {/* Ensure no horizontal overflow */}
+          <div className="flex flex-col flex-grow justify-center items-center w-full overflow-hidden">
             <MainContent
-              className="w-full h-full p-4 overflow-hidden" // Ensure no overflow
-              isSidebarOpen={false} // Sidebar not used for mobile
+              className="w-full h-full p-4 overflow-hidden"
+              isSidebarOpen={false}
               chatId={chatId}
               userId={userId}
             />
           </div>
-
-          {/* Footer */}
           <Footer />
         </div>
       )}
