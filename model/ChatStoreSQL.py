@@ -22,12 +22,13 @@ def get_mysql_connection():
 
 def serialize_chat_history(chat_history):
     serialized_history = []
+
     for message in chat_history:
         if isinstance(message, HumanMessage):
             serialized_message = {
                 "type": "HumanMessage",
                 "content": message.content,
-                # Serialize the specific response_metadata fields for HumanMessage
+                # Serialize specific response_metadata fields for HumanMessage
                 "mediaType": message.response_metadata.get("mediaType"),
                 "fileName": message.response_metadata.get("fileName")
             }
@@ -35,19 +36,21 @@ def serialize_chat_history(chat_history):
             serialized_message = {
                 "type": "AIMessage",
                 "content": message.content,
-                # Serialize the specific response_metadata fields for AIMessage
+                # Serialize specific response_metadata fields for AIMessage
                 "context": message.response_metadata.get("context"),
                 "files": message.response_metadata.get("files")
             }
         else:
             raise ValueError(f"Unknown message type: {message.__class__.__name__}")
-        
+
         serialized_history.append(serialized_message)
-    
+
     return json.dumps(serialized_history)
+
 
 def deserialize_chat_history(serialized_history):
     chat_history = []
+
     for serialized_message in json.loads(serialized_history):
         if serialized_message["type"] == "HumanMessage":
             # Deserialize HumanMessage with mediaType and fileName metadata
@@ -59,7 +62,7 @@ def deserialize_chat_history(serialized_history):
                 }
             )
         elif serialized_message["type"] == "AIMessage":
-            # Deserialize AIMessage with context metadata
+            # Deserialize AIMessage with context and files metadata
             message = AIMessage(
                 content=serialized_message["content"],
                 response_metadata={
@@ -69,10 +72,11 @@ def deserialize_chat_history(serialized_history):
             )
         else:
             raise ValueError(f"Unknown message type: {serialized_message['type']}")
-        
+
         chat_history.append(message)
-    
+
     return chat_history
+
 
 # Function to save chat history to MySQL
 def save_chat_history(ChatID, UserID, chat_history, chat_summary):
